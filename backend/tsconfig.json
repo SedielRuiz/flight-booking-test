@@ -17,6 +17,13 @@
     "skipLibCheck": true,
     "strict": true,
     "strictPropertyInitialization": false,
-    "types": ["vitest/globals", "node"]
+    "types": ["vitest/globals", "node"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@common/*": ["./src/common/*"],
+      "@flights/*": ["./src/flights/*"],
+      "@cities/*": ["./src/cities/*"],
+      "@prisma/*": ["./src/prisma/*"]
+    }
   }
 }

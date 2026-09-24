@@ -21,14 +21,42 @@ model User {
   @@map("users")
 }
 
+model City {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  
+  departures Flight[] @relation("FlightOrigin")
+  arrivals   Flight[] @relation("FlightDestination")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("cities")
+}
+
+enum FlightStatus {
+  SCHEDULED
+  DELAYED
+  CANCELLED
+  SOLD_OUT
+}
+
 model Flight {
   id            String   @id @default(uuid())
   flightNumber  String   @map("flight_number")
-  origin        String
-  destination   String
+  
+  originId      String   @map("origin_id")
+  origin        City     @relation("FlightOrigin", fields: [originId], references: [id])
+  
+  destinationId String   @map("destination_id")
+  destination   City     @relation("FlightDestination", fields: [destinationId], references: [id])
+  
   departureTime DateTime @map("departure_time")
   arrivalTime   DateTime @map("arrival_time")
   price         Float
+  
+  status        FlightStatus @default(SCHEDULED)
   
   seats         Seat[]
   reservations  Reservation[]

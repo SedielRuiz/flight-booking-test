@@ -1,0 +1,65 @@
+<!-- Results Section -->
+<div *ngIf="hasSearched">
+  
+  <div class="text-center py-5 text-muted" *ngIf="isLoading">
+    <div class="spinner-border text-danger mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+    <h5>Searching best routes...</h5>
+  </div>
+  
+  <div class="text-center py-5 text-muted bg-white rounded-4 shadow-sm" *ngIf="!isLoading && flights.length === 0">
+    <div class="display-1 mb-3 text-secondary"><i class="bi bi-airplane-engines"></i></div>
+    <h3 class="fw-bold">No flights found</h3>
+    <p>Try changing your route or date to see more options.</p>
+  </div>
+
+  <div class="card shadow-lg border-0 rounded-4 overflow-hidden" *ngIf="!isLoading && flights.length > 0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="text-uppercase text-muted small fw-bold py-3 px-4">Flight</th>
+            <th class="text-uppercase text-muted small fw-bold py-3">Route</th>
+            <th class="text-uppercase text-muted small fw-bold py-3">Departure</th>
+            <th class="text-uppercase text-muted small fw-bold py-3">Arrival</th>
+            <th class="text-uppercase text-muted small fw-bold py-3">Price</th>
+            <th class="text-uppercase text-muted small fw-bold py-3">Status</th>
+            <th class="py-3 px-4"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let flight of flights">
+            <td class="px-4">
+              <span class="me-2 text-danger"><i class="bi bi-airplane-fill"></i></span>
+              <strong>{{ flight.flightNumber }}</strong>
+            </td>
+            <td>
+              <span class="fw-bold">{{ flight.origin?.code }}</span>
+              <span class="text-muted mx-2"><i class="bi bi-arrow-right"></i></span>
+              <span class="fw-bold">{{ flight.destination?.code }}</span>
+            </td>
+            <td>{{ flight.departureTime | date:'shortTime' }}</td>
+            <td>{{ flight.arrivalTime | date:'shortTime' }}</td>
+            <td class="text-danger fw-bold fs-5">{{ flight.price | currency }}</td>
+            <td>
+              <span class="badge rounded-pill" 
+                [ngClass]="{
+                  'text-bg-primary': flight.status === 'SCHEDULED',
+                  'text-bg-warning': flight.status === 'DELAYED',
+                  'text-bg-danger': flight.status === 'CANCELLED',
+                  'text-bg-secondary': flight.status === 'SOLD_OUT'
+                }">
+                {{ flight.status | titlecase }}
+              </span>
+            </td>
+            <td class="px-4 text-end">
+              <button class="btn btn-outline-secondary btn-sm rounded-3 px-3 fw-bold" (click)="onViewSeats(flight.id)">View Seats</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Pagination -->
+    <app-pagination [meta]="meta" (pageChange)="onPageChange($event)" (limitChange)="onLimitChange($event)"></app-pagination>
+  </div>
+</div>

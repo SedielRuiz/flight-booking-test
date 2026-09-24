@@ -23,9 +23,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse();
     const statusCode = getStatusCode(exception);
     const message = getErrorMessage(exception);
-    
-    // Si el error es menor a 500 (ej. 400 Bad Request, 404 Not Found),
-    // mostramos la respuesta que da NestJS, si no, mostramos un mensaje genérico.
+
     const responseException =
       statusCode < HttpStatus.INTERNAL_SERVER_ERROR
         ? exception.getResponse()

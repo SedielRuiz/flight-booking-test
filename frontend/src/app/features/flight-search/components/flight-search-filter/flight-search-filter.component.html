@@ -1,0 +1,42 @@
+<div class="card shadow-lg border-0 mb-5 rounded-4 mt-2">
+  <div class="card-body p-4 p-md-5">
+    <h1 class="h3 fw-bold mb-1">Find Your Flight</h1>
+    <p class="text-muted mb-4">Book your next adventure with Davivienda Flights.</p>
+    
+    <form [formGroup]="searchForm" (ngSubmit)="onSearchSubmit()">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label for="originId" class="form-label text-uppercase fw-bold text-muted small">Origin</label>
+          <select id="originId" #originSelect formControlName="originId" class="form-select form-select-lg shadow-none">
+            <option value="" disabled selected>Select Origin</option>
+            <option *ngFor="let city of cities" [value]="city.id">{{ city.name }} ({{ city.code }})</option>
+          </select>
+        </div>
+
+        <div class="col-md-1 text-center d-none d-md-block pb-2 text-muted fs-4">
+          <i class="bi bi-airplane text-secondary"></i>
+        </div>
+
+        <div class="col-md-3">
+          <label for="destinationId" class="form-label text-uppercase fw-bold text-muted small">Destination</label>
+          <select id="destinationId" #destinationSelect formControlName="destinationId" class="form-select form-select-lg shadow-none">
+            <option value="" disabled selected>Select Destination</option>
+            <option *ngFor="let city of cities" [value]="city.id">{{ city.name }} ({{ city.code }})</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label for="date" class="form-label text-uppercase fw-bold text-muted small">Date</label>
+          <input type="text" id="date" #datePicker formControlName="date" class="form-control form-control-lg shadow-none bg-white" placeholder="Select date..." readonly />
+        </div>
+
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-danger btn-lg w-100 fw-bold" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Search</span>
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

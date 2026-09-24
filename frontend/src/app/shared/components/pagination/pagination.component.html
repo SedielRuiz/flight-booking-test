@@ -1,0 +1,44 @@
+<div class="card-footer bg-light border-0 py-4 px-4 rounded-bottom-4" *ngIf="meta && meta.totalPages >= 1">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+    
+    <div class="d-flex align-items-center gap-3 text-muted small fw-medium">
+      <span>Showing <strong>{{ meta.total }}</strong> results</span>
+      
+      <div class="d-flex align-items-center gap-2">
+        <span>Rows per page:</span>
+        <select class="form-select form-select-sm shadow-none rounded-3 border-secondary-subtle" 
+                style="width: 70px;" 
+                [value]="meta.limit" 
+                (change)="onLimitChange($event)">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+      </div>
+    </div>
+
+    <nav aria-label="Page navigation">
+      <ul class="pagination pagination-sm justify-content-center mb-0 gap-1">
+        <li class="page-item" [class.disabled]="meta.page === 1">
+          <button class="page-link shadow-none border-0 rounded-circle text-secondary d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;" (click)="onPageChange(meta.page - 1)">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+        </li>
+        <li class="page-item" *ngFor="let p of [].constructor(meta.totalPages); let i = index">
+          <button class="page-link shadow-none border-0 rounded-circle fw-bold d-flex align-items-center justify-content-center" 
+                  style="width: 35px; height: 35px;"
+                  [ngClass]="meta.page === i + 1 ? 'bg-danger text-white' : 'text-secondary hover-bg-light'" 
+                  (click)="onPageChange(i + 1)">
+            {{ i + 1 }}
+          </button>
+        </li>
+        <li class="page-item" [class.disabled]="meta.page === meta.totalPages">
+          <button class="page-link shadow-none border-0 rounded-circle text-secondary d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;" (click)="onPageChange(meta.page + 1)">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

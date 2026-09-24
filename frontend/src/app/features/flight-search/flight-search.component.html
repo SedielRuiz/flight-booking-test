@@ -1,0 +1,14 @@
+<app-flight-search-filter
+  [isLoading]="isLoading"
+  (search)="onSearch($event)">
+</app-flight-search-filter>
+
+<app-flight-search-results
+  [flights]="flights"
+  [meta]="meta"
+  [isLoading]="isLoading"
+  [hasSearched]="hasSearched"
+  (pageChange)="goToPage($event)"
+  (limitChange)="onLimitChange($event)"
+  (viewSeats)="onViewSeats($event)">
+</app-flight-search-results>
