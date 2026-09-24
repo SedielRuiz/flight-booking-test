@@ -3,12 +3,15 @@ import type { FlightEntity, FlightWithSeats, PaginatedResult } from '@flights/do
 import type { FlightRepository } from '@flights/domain/repositories/flight.repository.js';
 import { FLIGHT_REPOSITORY } from '@flights/domain/repositories/flight.repository.js';
 import type { FlightSearchCriteria } from '@flights/domain/interfaces/flight-search-criteria.interface.js';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { FlightStatusEnum } from '@flights/domain/enums/flight-status.enum.js';
 
 @Injectable()
 export class FlightsService {
   constructor(
     @Inject(FLIGHT_REPOSITORY)
     private readonly flightRepository: FlightRepository,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async findAll(page: number = 1, limit: number = 10): Promise<PaginatedResult<FlightEntity>> {
@@ -33,5 +36,19 @@ export class FlightsService {
     }
 
     return this.flightRepository.search(searchCriteria);
+  }
+
+  async updateStatus(id: string, status: FlightStatusEnum): Promise<FlightEntity | null> {
+    const flight = await this.flightRepository.updateStatus(id, status);
+    if (flight) {
+      this.eventEmitter.emit('app.events', {
+        type: 'FLIGHT_STATUS_UPDATED',
+        payload: {
+          flightId: flight.id,
+          status: flight.status
+        }
+      });
+    }
+    return flight;
   }
 }

@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from '@core/layouts/main-layout/main-layout.component';
+import { FlightSearchComponent } from '@features/flight-search/flight-search.component';
+import { ReservationsComponent } from '@features/reservations/reservations.component';
+import { SeatSelectionComponent } from './features/seat-selection/seat-selection.component';
 
 export const routes: Routes = [
   {
@@ -9,11 +12,15 @@ export const routes: Routes = [
       { path: '', redirectTo: 'flights', pathMatch: 'full' },
       { 
         path: 'flights', 
-        loadComponent: () => import('@features/flight-search/flight-search.component').then(m => m.FlightSearchComponent)
+        component: FlightSearchComponent
       },
       { 
         path: 'reservations', 
-        loadComponent: () => import('@features/reservations/reservations.component').then(m => m.ReservationsComponent)
+        component: ReservationsComponent
+      },
+      {
+        path: 'flights/:id/seats',
+        component: SeatSelectionComponent
       }
     ]
   }

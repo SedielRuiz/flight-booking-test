@@ -4,6 +4,7 @@ import { FlightEntity, FlightWithSeats, PaginatedResult } from '@flights/domain/
 import { FlightRepository } from '@flights/domain/repositories/flight.repository.js';
 import { FlightSearchCriteria } from '@flights/domain/interfaces/flight-search-criteria.interface.js';
 import { FlightMapper } from '@flights/infrastructure/mappers/flight.mapper.js';
+import { FlightStatusEnum } from '@flights/domain/enums/flight-status.enum.js';
 
 @Injectable()
 export class PrismaFlightRepository implements FlightRepository {
@@ -96,5 +97,18 @@ export class PrismaFlightRepository implements FlightRepository {
         totalPages: Math.ceil(total / limit),
       },
     };
+  }
+
+  async updateStatus(id: string, status: FlightStatusEnum): Promise<FlightEntity | null> {
+    try {
+      const flight = await this.prisma.flight.update({
+        where: { id },
+        data: { status },
+        include: { origin: true, destination: true }
+      });
+      return FlightMapper.toDomain(flight);
+    } catch (error) {
+      return null;
+    }
   }
 }

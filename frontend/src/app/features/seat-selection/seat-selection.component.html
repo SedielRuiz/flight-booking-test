@@ -1,0 +1,147 @@
+<div class="container py-4">
+  <!-- Back button -->
+  <div class="mb-4">
+    <a routerLink="/" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 rounded-pill px-4">
+      <i class="bi bi-arrow-left"></i> Volver a resultados
+    </a>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-danger mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+    <h5>Loading aircraft map...</h5>
+  </div>
+
+  <div *ngIf="!isLoading && flight" class="row">
+    <!-- Flight Info Sidebar -->
+    <div class="col-lg-4 mb-4">
+      <div class="card shadow-sm border-0 rounded-4 sticky-top" style="top: 2rem;">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold mb-0">Flight Details</h5>
+            <span class="badge bg-danger rounded-pill px-3">{{ flight.flightNumber }}</span>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-between bg-light p-3 rounded-4 mb-4">
+            <div class="text-center">
+              <h3 class="fw-bold text-dark mb-0">{{ flight.origin?.code }}</h3>
+              <small class="text-muted">{{ flight.departureTime | date:'shortTime' }}</small>
+            </div>
+            <div class="text-muted d-flex flex-column align-items-center px-3">
+              <i class="bi bi-airplane-fill text-danger fs-4 mb-1"></i>
+              <small>{{ flight.departureTime | date:'MMM d' }}</small>
+            </div>
+            <div class="text-center">
+              <h3 class="fw-bold text-dark mb-0">{{ flight.destination?.code }}</h3>
+              <small class="text-muted">{{ flight.arrivalTime | date:'shortTime' }}</small>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-muted text-uppercase small fw-bold mb-3">Selected Seat</h6>
+            <div *ngIf="!selectedSeat" class="bg-light text-muted p-3 rounded-3 text-center border border-dashed">
+              Please select a seat from the map
+            </div>
+            <div *ngIf="selectedSeat" class="d-flex justify-content-between align-items-center bg-danger bg-opacity-10 text-danger p-3 rounded-3 border border-danger">
+              <div class="d-flex align-items-center gap-3">
+                <div class="bg-danger text-white rounded-2 d-flex align-items-center justify-content-center fw-bold" style="width: 40px; height: 40px;">
+                  {{ selectedSeat.seatNumber }}
+                </div>
+                <div class="fw-medium">Standard Seat</div>
+              </div>
+            </div>
+          </div>
+
+          <hr class="text-muted opacity-25">
+
+          <div class="d-flex justify-content-between align-items-end mb-4">
+            <span class="text-muted fw-medium">Total Price</span>
+            <span class="fs-3 fw-bold text-dark">{{ flight.price | currency }}</span>
+          </div>
+
+          <button class="btn btn-danger btn-lg w-100 fw-bold rounded-3 shadow-sm" [disabled]="!selectedSeat" (click)="proceedToCheckout()">
+            Continue to Checkout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seat Map -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4 p-md-5">
+          <div class="text-center mb-5">
+            <h3 class="fw-bold">Select your seat</h3>
+            <p class="text-muted">Choose your preferred seat for a comfortable journey.</p>
+            
+            <div class="d-flex justify-content-center gap-4 mt-4">
+              <div class="d-flex align-items-center gap-2">
+                <div class="seat-legend available"></div>
+                <small class="text-muted fw-medium">Available</small>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <div class="seat-legend selected"></div>
+                <small class="text-muted fw-medium">Selected</small>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <div class="seat-legend occupied"></div>
+                <small class="text-muted fw-medium">Occupied</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="plane-container bg-light rounded-5 py-5 px-3 mx-auto shadow-inner" style="max-width: 450px;">
+            <div class="plane-nose mx-auto mb-5"></div>
+            
+            <!-- Rows -->
+            <div class="d-flex flex-column gap-3">
+              <div class="d-flex justify-content-between align-items-center" *ngFor="let row of getRows()">
+                
+                <!-- Left Column (A, B, C) -->
+                <div class="d-flex gap-2">
+                  <ng-container *ngFor="let col of ['A', 'B', 'C']">
+                    <button *ngIf="getSeat(row, col) as seat"
+                            class="seat"
+                            [ngClass]="{
+                              'occupied': seat.status === 'LOCKED' || seat.status === 'BOOKED',
+                              'selected': selectedSeat?.id === seat.id,
+                              'available': seat.status === 'AVAILABLE' && selectedSeat?.id !== seat.id
+                            }"
+                            [disabled]="seat.status !== 'AVAILABLE'"
+                            (click)="selectSeat(seat)">
+                      {{ seat.seatNumber }}
+                    </button>
+                  </ng-container>
+                </div>
+                
+                <!-- Aisle with Row Number -->
+                <div class="text-muted fw-bold mx-2" style="width: 30px; text-align: center;">
+                  {{ row }}
+                </div>
+
+                <!-- Right Column (D, E, F) -->
+                <div class="d-flex gap-2">
+                  <ng-container *ngFor="let col of ['D', 'E', 'F']">
+                    <button *ngIf="getSeat(row, col) as seat"
+                            class="seat"
+                            [ngClass]="{
+                              'occupied': seat.status === 'LOCKED' || seat.status === 'BOOKED',
+                              'selected': selectedSeat?.id === seat.id,
+                              'available': seat.status === 'AVAILABLE' && selectedSeat?.id !== seat.id
+                            }"
+                            [disabled]="seat.status !== 'AVAILABLE'"
+                            (click)="selectSeat(seat)">
+                      {{ seat.seatNumber }}
+                    </button>
+                  </ng-container>
+                </div>
+
+              </div>
+            </div>
+            
+            <div class="plane-tail mx-auto mt-5"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

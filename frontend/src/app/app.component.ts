@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { SseService } from '@core/services/sse.service';
+import { environment } from '@environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,8 @@ import { RouterOutlet } from '@angular/router';
   imports: [RouterOutlet],
   template: '<router-outlet></router-outlet>',
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor(private sseService: SseService) {
+    this.sseService.connect(`${environment.apiUrl}/events`);
+  }
+}

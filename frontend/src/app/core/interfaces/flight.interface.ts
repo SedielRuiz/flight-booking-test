@@ -11,4 +11,13 @@ export interface Flight {
   arrivalTime: string;
   price: number;
   status: string;
+  seats?: Seat[];
+}
+
+export interface Seat {
+  id: string;
+  flightId: string;
+  seatNumber: string;
+  status: 'AVAILABLE' | 'LOCKED' | 'BOOKED';
+  price?: number;
 }

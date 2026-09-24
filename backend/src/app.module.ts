@@ -5,8 +5,10 @@ import { PrismaModule } from '@prisma/prisma.module.js';
 import { FlightsModule } from '@flights/flights.module.js';
 import { CitiesModule } from '@cities/cities.module.js';
 
+import { EventEmitterModule } from '@nestjs/event-emitter';
+
 @Module({
-  imports: [PrismaModule, FlightsModule, CitiesModule],
+  imports: [PrismaModule, FlightsModule, CitiesModule, EventEmitterModule.forRoot()],
   controllers: [AppController],
   providers: [AppService],
 })

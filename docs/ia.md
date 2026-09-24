@@ -31,5 +31,13 @@ A lo largo del desarrollo, la IA propuso varias soluciones subóptimas que tuvie
    - *Error de la IA:* La configuración por defecto de `ioredis` sugerida por la IA dejaba colgado el hilo principal si Redis no estaba disponible, afectando los healthchecks (`curl` se quedaba pegado).
    - *Corrección Técnica:* Se configuró explícitamente `commandTimeout: 2000`, `enableOfflineQueue: false` y se agregaron listeners de eventos de error en background para evitar "Unhandled Promise Rejections".
 
+5. **Arquitectura de Eventos en Tiempo Real (SSE):**
+   - *Error de la IA:* La IA propuso instanciar un `EventSource` independiente dentro de cada servicio de Angular que requería datos en tiempo real. Esto generaba múltiples conexiones `keep-alive` paralelas hacia el backend, saturando innecesariamente la red y duplicando eventos. Además, la serialización nativa de NestJS al usar decoradores `@Sse()` envolvía los objetos con capas redundantes de JSON.
+   - *Corrección Técnica:* Se diseñó un patrón Singleton (`SseService`) que actúa como un **Event Bus** global en Angular. La conexión se abre una única vez en el arranque de la aplicación (`app.component.ts`), y los componentes se suscriben filtrando los eventos mediante RxJS (`Subject` y `filter`). En el frontend se implementó la lógica para desempacar de forma segura los múltiples envoltorios (`data.data`) generados por la conversión automática de NestJS, garantizando la correcta emisión de eventos tipados.
+
+6. **Desacoplamiento y Orquestación de Componentes en Angular:**
+   - *Error de la IA:* Inicialmente, la IA tendía a agrupar la lógica de búsqueda, filtros y listado de resultados en componentes monolíticos grandes o con dependencias acopladas directamente.
+   - *Corrección Técnica:* Se intervino el código de forma manual para orquestar una arquitectura modular. Se desacoplaron las vistas en componentes independientes y reutilizables (`FlightSearchComponent`, `FlightSearchResultsComponent`), centralizando el estado de la búsqueda en el contenedor principal y utilizando señales/observables para la comunicación limpia entre componentes.
+
 ## 4. Impacto
 El uso de la IA aportó el mayor valor en la reducción de tiempo (aproximadamente un ahorro del **40% al 50%** del tiempo total en las primeras horas) al encargarse del "boilerplate" pesado: generar los módulos, controladores, servicios y la sintaxis inicial de los Dockerfiles. Sin embargo, quedó demostrado que para la capa de **orquestación de redes, despliegue en Alpine, manejo seguro de errores y afinamiento de dependencias**, el criterio arquitectónico humano es absolutamente indispensable.

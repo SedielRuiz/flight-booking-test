@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -9,13 +10,12 @@ import {
   ViewChild,
   inject,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { City } from '@core/interfaces/city.interface';
+import { SearchFlightsParams } from '@core/interfaces/search-flights-params.interface';
 import { CitiesService } from '@core/services/api/cities.service';
 import Choices from 'choices.js';
 import flatpickr from 'flatpickr';
-import { SearchFlightsParams } from '@core/interfaces/search-flights-params.interface';
 
 @Component({
   selector: 'app-flight-search-filter',
@@ -40,6 +40,7 @@ export class FlightSearchFilterComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.initForm();
     this.loadCities();
+    this.onSearchSubmit();
   }
 
   ngAfterViewInit(): void {
@@ -78,7 +79,7 @@ export class FlightSearchFilterComponent implements OnInit, AfterViewInit {
       destinationId: [''],
       startDate: [today],
       endDate: [nextWeekStr],
-      date: ['']
+      date: [''],
     });
   }
 
@@ -132,7 +133,8 @@ export class FlightSearchFilterComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const { originId, destinationId, startDate, endDate } = this.searchForm.value;
+    const { originId, destinationId, startDate, endDate } =
+      this.searchForm.value;
     this.search.emit({ originId, destinationId, startDate, endDate });
   }
 }

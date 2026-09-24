@@ -24,4 +24,8 @@ export class FlightsService {
 
     return this.http.get<ApiResponse<Flight[]>>('/flights', { params });
   }
+
+  getFlightById(id: string): Observable<ApiResponse<Flight>> {
+    return this.http.get<ApiResponse<Flight>>(`/flights/${id}`);
+  }
 }
