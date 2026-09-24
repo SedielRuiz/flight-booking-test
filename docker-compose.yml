@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # Base de Datos Relacional (PostgreSQL)
@@ -17,7 +17,7 @@ services:
     networks:
       - flight_network
 
-  # Base de Datos en Memoria (Redis para control de concurrencia)
+  # Redis para control de concurrencia
   redis:
     image: redis:7-alpine
     container_name: flight_redis
@@ -34,10 +34,7 @@ services:
       dockerfile: Dockerfile
     container_name: flight_backend
     restart: always
-    # ports:
-    #   - "3000:3000" # El puerto se oculta del exterior, Nginx (puerto 80) hará de proxy
     environment:
-      # Conecta directamente al servicio postgres en la red interna de docker
       - DATABASE_URL=postgresql://admin:admin_password@postgres:5432/flight_booking?schema=public
       - REDIS_HOST=redis
       - REDIS_PORT=6379
@@ -55,7 +52,7 @@ services:
     container_name: flight_frontend
     restart: always
     ports:
-      - "80:80"
+      - "4200:80"
     volumes:
       - ./infrastructure/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:

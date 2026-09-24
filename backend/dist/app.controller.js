@@ -14,18 +14,18 @@ let AppController = class AppController {
     constructor(appService) {
         this.appService = appService;
     }
-    getHello() {
-        return this.appService.getHello();
+    async health() {
+        return await this.appService.getHealthCheck();
     }
 };
 __decorate([
-    Get(),
+    Get('health'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", String)
-], AppController.prototype, "getHello", null);
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "health", null);
 AppController = __decorate([
-    Controller(),
+    Controller('api'),
     __metadata("design:paramtypes", [AppService])
 ], AppController);
 export { AppController };
