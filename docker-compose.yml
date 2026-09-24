@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # Base de Datos Relacional para persistencia final (ACID)
+  postgres:
+    image: postgres:15-alpine
+    container_name: flight_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin_password
+      POSTGRES_DB: flight_booking
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - flight_network
+
+  # Base de Datos en Memoria para los Locks Atómicos (Double Booking)
+  redis:
+    image: redis:7-alpine
+    container_name: flight_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - flight_network
+
+volumes:
+  postgres_data:
+
+networks:
+  flight_network:
+    driver: bridge
