@@ -23,7 +23,8 @@
       "@common/*": ["./src/common/*"],
       "@flights/*": ["./src/flights/*"],
       "@cities/*": ["./src/cities/*"],
-      "@prisma/*": ["./src/prisma/*"]
+      "@prisma/*": ["./src/prisma/*"],
+      "@domain/*": ["./src/shared/*"]
     }
   }
 }

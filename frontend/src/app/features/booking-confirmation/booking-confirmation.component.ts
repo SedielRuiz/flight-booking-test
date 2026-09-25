@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { APP_ROUTES } from '@core/constants/routes.constant';
-import { PaymentStatus, ReservationStatus } from '@core/enums/domain.enums';
+import { PaymentStatus, ReservationStatus } from '@domain/index';
 import { BookingResult } from '@core/services/api/payments.service';
 
 @Component({

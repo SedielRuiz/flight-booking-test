@@ -1,16 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@prisma/prisma.service.js';
-import { FlightEntity, FlightWithSeats, PaginatedResult } from '@flights/domain/entities/flight.entity.js';
-import { FlightRepository } from '@flights/domain/repositories/flight.repository.js';
+import { FlightStatusEnum } from '@domain/index.js';
+import {
+  FlightEntity,
+  FlightWithSeats,
+  PaginatedResult,
+} from '@flights/domain/entities/flight.entity.js';
 import { FlightSearchCriteria } from '@flights/domain/interfaces/flight-search-criteria.interface.js';
+import { FlightRepository } from '@flights/domain/repositories/flight.repository.js';
 import { FlightMapper } from '@flights/infrastructure/mappers/flight.mapper.js';
-import { FlightStatusEnum } from '@flights/domain/enums/flight-status.enum.js';
+import { Injectable } from '@nestjs/common';
+import { FlightStatus } from '@prisma/client';
+import { PrismaService } from '@prisma/prisma.service.js';
 
 @Injectable()
 export class PrismaFlightRepository implements FlightRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(page: number, limit: number): Promise<PaginatedResult<FlightEntity>> {
+  async findAll(
+    page: number,
+    limit: number,
+  ): Promise<PaginatedResult<FlightEntity>> {
     const skip = (page - 1) * limit;
 
     const [total, data] = await this.prisma.$transaction([
@@ -27,7 +35,7 @@ export class PrismaFlightRepository implements FlightRepository {
     ]);
 
     return {
-      data: data.map(flight => FlightMapper.toDomain(flight)),
+      data: data.map((flight) => FlightMapper.toDomain(flight)),
       meta: {
         total,
         page,
@@ -53,8 +61,11 @@ export class PrismaFlightRepository implements FlightRepository {
     return FlightMapper.toDomainWithSeats(flight);
   }
 
-  async search(criteria: FlightSearchCriteria): Promise<PaginatedResult<FlightEntity>> {
-    const { originId, destinationId, startDate, endDate, page, limit } = criteria;
+  async search(
+    criteria: FlightSearchCriteria,
+  ): Promise<PaginatedResult<FlightEntity>> {
+    const { originId, destinationId, startDate, endDate, page, limit } =
+      criteria;
     const skip = (page - 1) * limit;
 
     const where: any = {};
@@ -89,7 +100,7 @@ export class PrismaFlightRepository implements FlightRepository {
     ]);
 
     return {
-      data: data.map(flight => FlightMapper.toDomain(flight)),
+      data: data.map((flight) => FlightMapper.toDomain(flight)),
       meta: {
         total,
         page,
@@ -99,12 +110,30 @@ export class PrismaFlightRepository implements FlightRepository {
     };
   }
 
-  async updateStatus(id: string, status: FlightStatusEnum): Promise<FlightEntity | null> {
+  private mapStatusToPrisma(status: FlightStatusEnum): FlightStatus {
+    switch (status) {
+      case FlightStatusEnum.SCHEDULED:
+        return FlightStatus.SCHEDULED;
+      case FlightStatusEnum.CANCELLED:
+        return FlightStatus.CANCELLED;
+      case FlightStatusEnum.DELAYED:
+        return FlightStatus.DELAYED;
+      case FlightStatusEnum.SOLD_OUT:
+        return FlightStatus.SOLD_OUT;
+      default:
+        return FlightStatus.SCHEDULED;
+    }
+  }
+
+  async updateStatus(
+    id: string,
+    status: FlightStatusEnum,
+  ): Promise<FlightEntity | null> {
     try {
       const flight = await this.prisma.flight.update({
         where: { id },
-        data: { status },
-        include: { origin: true, destination: true }
+        data: { status: this.mapStatusToPrisma(status) },
+        include: { origin: true, destination: true },
       });
       return FlightMapper.toDomain(flight);
     } catch (error) {

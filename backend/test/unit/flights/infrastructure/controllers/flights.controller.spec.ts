@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { FlightsController } from '@/flights/infrastructure/controllers/flights.controller.js';
 import { FlightsService } from '@/flights/application/flights.service.js';
 import { NotFoundException } from '@nestjs/common';
-import { FlightStatusEnum } from '@/flights/domain/enums/flight-status.enum.js';
+import { FlightStatusEnum, SeatStatusEnum } from '@domain/index.js';
 
 describe('FlightsController', () => {
   let controller: FlightsController;

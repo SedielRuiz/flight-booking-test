@@ -3,7 +3,7 @@ import type {
   FlightWithSeats,
   PaginatedResult,
 } from '@flights/domain/entities/flight.entity.js';
-import { FlightStatusEnum } from '@flights/domain/enums/flight-status.enum.js';
+import { FlightStatusEnum, SeatStatusEnum } from '@domain/index.js';
 import type { FlightSearchCriteria } from '@flights/domain/interfaces/flight-search-criteria.interface.js';
 import type { FlightRepository } from '@flights/domain/repositories/flight.repository.js';
 import { FLIGHT_REPOSITORY } from '@flights/domain/repositories/flight.repository.js';

@@ -2,11 +2,12 @@ FROM node:22-alpine AS build
 WORKDIR /app
 
 # Install dependencies
-COPY package*.json ./
+COPY frontend/package*.json ./
 RUN npm install
 
-# Copy application code
-COPY . .
+# Copy application code and shared library
+COPY frontend .
+COPY backend/src/shared ../backend/src/shared
 
 # Build the Angular app
 RUN npm run build --configuration=production

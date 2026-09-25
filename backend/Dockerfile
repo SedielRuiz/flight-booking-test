@@ -5,12 +5,12 @@ WORKDIR /app
 RUN apk add --no-cache openssl
 
 # Install dependencies
-COPY package*.json ./
-COPY prisma ./prisma/
+COPY backend/package*.json ./
+COPY backend/prisma ./prisma/
 RUN npm install
 
 # Copy application code
-COPY . .
+COPY backend .
 
 # Generate Prisma client
 RUN npx prisma generate
@@ -21,4 +21,4 @@ RUN npm run build
 EXPOSE 3000
 
 # Start the application
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start:docker"]

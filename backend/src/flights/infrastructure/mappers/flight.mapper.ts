@@ -2,8 +2,7 @@ import {
   FlightEntity,
   FlightWithSeats,
 } from '@flights/domain/entities/flight.entity.js';
-import { FlightStatusEnum } from '@flights/domain/enums/flight-status.enum.js';
-import { SeatStatusEnum } from '@flights/domain/enums/seat-status.enum.js';
+import { FlightStatusEnum, SeatStatusEnum } from '@domain/index.js';
 import { City, Flight, Seat } from '@prisma/client';
 
 type PrismaFlight = Flight & {

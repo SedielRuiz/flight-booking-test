@@ -3,7 +3,7 @@ import { PrismaClient, SeatStatus } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Seeding database...');
+  console.log('Seeding database...');
 
   // Limpiar datos existentes (orden por FK)
   await prisma.ticket.deleteMany();
@@ -142,7 +142,7 @@ async function main() {
   }
 
   console.log(
-    `✅ ${totalSeats} seats created (${rows.length * columns.length} per flight)`,
+    `${totalSeats} seats created (${rows.length * columns.length} per flight)`,
   );
 
   // Crear usuario de prueba
@@ -153,13 +153,13 @@ async function main() {
     },
   });
 
-  console.log('✅ Test user created');
-  console.log('🎉 Seed completed successfully!');
+  console.log('Test user created');
+  console.log('Seed completed successfully!');
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Seed failed:', e);
+    console.error('Seed failed:', e);
     process.exit(1);
   })
   .finally(async () => {

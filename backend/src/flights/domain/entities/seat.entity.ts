@@ -1,4 +1,4 @@
-import { SeatStatusEnum } from '@flights/domain/enums/seat-status.enum.js';
+import { FlightStatusEnum, SeatStatusEnum } from '@domain/index.js';
 
 export interface SeatEntity {
   id: string;

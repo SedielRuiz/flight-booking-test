@@ -6,7 +6,7 @@ import { FlightsService } from '@core/services/api/flights.service';
 import { SseService } from '@core/services/sse.service';
 import { Subscription } from 'rxjs';
 
-import { SeatStatus } from '@core/enums/domain.enums';
+import { SeatStatus } from '@domain/index';
 import { ModalComponent } from '@shared/components/modal/modal.component';
 
 @Component({

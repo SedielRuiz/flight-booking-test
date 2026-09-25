@@ -1,6 +1,6 @@
 import type { CityEntity } from '@cities/domain/entities/city.entity.js';
 import type { SeatEntity } from '@flights/domain/entities/seat.entity.js';
-import { FlightStatusEnum } from '@flights/domain/enums/flight-status.enum.js';
+import { FlightStatusEnum, SeatStatusEnum } from '@domain/index.js';
 
 export interface FlightEntity {
   id: string;

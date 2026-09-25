@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { FlightsService } from '@/flights/application/flights.service.js';
 import { FlightRepository } from '@flights/domain/repositories/flight.repository.js';
-import { FlightStatusEnum } from '@flights/domain/enums/flight-status.enum.js';
+import { FlightStatusEnum, SeatStatusEnum } from '@domain/index.js';
 
 describe('FlightsService', () => {
   let service: FlightsService;

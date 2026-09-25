@@ -1,5 +1,5 @@
 import { City } from './city.interface';
-import { SeatStatus } from '@core/enums/domain.enums';
+import { SeatStatus } from '@domain/index';
 
 export interface Flight {
   id: string;
