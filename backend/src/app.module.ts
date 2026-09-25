@@ -6,9 +6,12 @@ import { FlightsModule } from '@flights/flights.module.js';
 import { CitiesModule } from '@cities/cities.module.js';
 
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { RedisModule } from '@common/redis/redis.module.js';
+import { CryptoModule } from '@common/crypto/crypto.module.js';
+import { PaymentsModule } from './payments/payments.module.js';
 
 @Module({
-  imports: [PrismaModule, FlightsModule, CitiesModule, EventEmitterModule.forRoot()],
+  imports: [PrismaModule, FlightsModule, CitiesModule, EventEmitterModule.forRoot(), RedisModule, CryptoModule, PaymentsModule],
   controllers: [AppController],
   providers: [AppService],
 })

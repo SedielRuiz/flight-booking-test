@@ -1,0 +1,148 @@
+<div class="confirmation-page">
+
+  <!-- Animated success header -->
+  <div class="confirmation-header">
+    <div class="success-ring">
+      <div class="checkmark-circle">
+        <i class="bi bi-check-lg checkmark-icon"></i>
+      </div>
+    </div>
+    <h1 class="confirmation-title">Reserva Confirmada</h1>
+    <p class="confirmation-subtitle">
+      Tu pago fue procesado y tu asiento está asegurado
+    </p>
+  </div>
+
+  <ng-container *ngIf="booking">
+    <div class="confirmation-body">
+
+      <!-- Booking Code Card -->
+      <div class="booking-code-card">
+        <div class="booking-code-label">
+          <i class="bi bi-ticket-perforated-fill"></i>
+          Código de Reserva
+        </div>
+        <div class="booking-code-value" id="booking-code">{{ booking.bookingCode }}</div>
+        <div class="booking-code-hint">Guarda este código para cualquier consulta</div>
+      </div>
+
+      <!-- Details Grid -->
+      <div class="details-grid">
+
+        <!-- Flight Info -->
+        <div class="detail-card">
+          <div class="detail-card-header">
+            <i class="bi bi-airplane-fill"></i>
+            Información del Vuelo
+          </div>
+          <div class="detail-rows">
+            <div class="detail-row">
+              <span class="detail-label">Número de vuelo</span>
+              <span class="detail-value">{{ booking.flightNumber }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Asiento</span>
+              <span class="detail-value seat-badge">{{ booking.seatNumber }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Passenger Info -->
+        <div class="detail-card">
+          <div class="detail-card-header">
+            <i class="bi bi-person-fill"></i>
+            Pasajero
+          </div>
+          <div class="detail-rows">
+            <div class="detail-row">
+              <span class="detail-label">Nombre</span>
+              <span class="detail-value">{{ booking.passengerName }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Estado</span>
+              <span class="status-badge confirmed">
+                <i class="bi bi-check-circle-fill"></i>
+                {{ ReservationStatus.CONFIRMED }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Info -->
+        <div class="detail-card">
+          <div class="detail-card-header">
+            <i class="bi bi-credit-card-fill"></i>
+            Pago
+          </div>
+          <div class="detail-rows">
+            <div class="detail-row">
+              <span class="detail-label">Monto</span>
+              <span class="detail-value amount">${{ booking.amount | number:'1.2-2' }} USD</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Estado</span>
+              <span class="status-badge success">
+                <i class="bi bi-shield-check-fill"></i>
+                {{ PaymentStatus.SUCCESS }}
+              </span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Método</span>
+              <span class="detail-value">Tarjeta de crédito</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Encriptación</span>
+              <span class="detail-value crypto-badge">
+                <i class="bi bi-lock-fill"></i>
+                RSA-OAEP SHA-256
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Booking Info -->
+        <div class="detail-card">
+          <div class="detail-card-header">
+            <i class="bi bi-calendar-check-fill"></i>
+            Reserva
+          </div>
+          <div class="detail-rows">
+            <div class="detail-row">
+              <span class="detail-label">Confirmada el</span>
+              <span class="detail-value">{{ confirmedAt | date:'dd MMM yyyy, h:mm a' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Referencia</span>
+              <span class="detail-value mono">{{ booking.bookingCode }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Security Note -->
+      <div class="security-note">
+        <i class="bi bi-shield-lock-fill"></i>
+        <p>
+          Tus datos de pago fueron encriptados con <strong>RSA-OAEP (SHA-256)</strong> en tu navegador 
+          antes de ser transmitidos. El servidor nunca recibió ni almacenó tu número de tarjeta en texto plano. 
+          En producción, las llaves RSA estarían en un <strong>Secrets Manager</strong> (AWS / GCP / Azure).
+        </p>
+      </div>
+
+      <!-- Actions -->
+      <div class="action-buttons">
+        <button class="btn-print" (click)="printPage()" id="print-confirmation-btn">
+          <i class="bi bi-printer-fill"></i>
+          Imprimir comprobante
+        </button>
+        <button class="btn-home" (click)="goHome()" id="go-home-btn">
+          <i class="bi bi-house-fill"></i>
+          Volver al inicio
+        </button>
+      </div>
+
+    </div>
+  </ng-container>
+
+</div>

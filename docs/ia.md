@@ -10,6 +10,8 @@ El uso de herramientas de Inteligencia Artificial fue fundamental para acelerar 
 - **Scaffolding Inicial:** *"Necesito un monorepo con NestJS en el backend y Angular 18 en el frontend. Codifica en Prisma este modelo relacional que he diseñado con las entidades: User, Flight, Seat, Reservation, Ticket, Payment."*
 - **Configuración Nginx:** *"Configura Nginx como API Gateway para servir la SPA de Angular en la raíz y redirigir todo el tráfico que empiece con `/api/` hacia el servicio del backend en el puerto 3000."*
 - **Health Checks:** *"Genera un endpoint de healthcheck en el backend que valide la conexión tanto a PostgreSQL como a Redis, manejando los errores de forma segura sin romper el event loop."*
+- **Reserva en Tiempo Real:** *"Implementa un sistema de bloqueo distribuido de sillas con Redis que evite la colisión de asientos mientras un usuario realiza el pago, usando Server-Sent Events (SSE) para actualizar el mapa de sillas al instante."*
+- **Seguridad y Encriptación (PCI DSS):** *"Genera un servicio de criptografía usando Node `crypto` que exponga una llave pública RSA al frontend para encriptar los datos de la tarjeta de crédito, y los desencripte de forma segura en el backend antes de procesar la transacción."*
 
 ## 3. Refactorización y Criterio Propio
 A lo largo del desarrollo, la IA propuso varias soluciones subóptimas que tuvieron que ser corregidas mediante criterio técnico:
@@ -38,6 +40,14 @@ A lo largo del desarrollo, la IA propuso varias soluciones subóptimas que tuvie
 6. **Desacoplamiento y Orquestación de Componentes en Angular:**
    - *Error de la IA:* Inicialmente, la IA tendía a agrupar la lógica de búsqueda, filtros y listado de resultados en componentes monolíticos grandes o con dependencias acopladas directamente.
    - *Corrección Técnica:* Se intervino el código de forma manual para orquestar una arquitectura modular. Se desacoplaron las vistas en componentes independientes y reutilizables (`FlightSearchComponent`, `FlightSearchResultsComponent`), centralizando el estado de la búsqueda en el contenedor principal y utilizando señales/observables para la comunicación limpia entre componentes.
+
+7. **Lógica Distribuida de Reservas y Sincronización de Estados:**
+   - *Error de la IA:* La IA originalmente creó múltiples estados redundantes (`OCCUPIED`, `SOLD`, `RESERVED`) desconectados entre el frontend y el backend. Además, el bloqueo temporal en Redis no se liberaba automáticamente si el usuario cerraba la ventana a mitad del pago o el temporizador expiraba, secuestrando la silla temporalmente.
+   - *Corrección Técnica:* Se unificaron los estados bajo un único Single Source of Truth (`RESERVED` como estado de compra final) en Prisma y los enums de todo el stack. Adicionalmente, se implementó una lógica de liberación temprana (`unlockSeat`) que suelta la llave en Redis y dispara eventos SSE de desbloqueo al instante en cuanto el componente de checkout es destruido sin éxito de pago, garantizando alta concurrencia.
+
+8. **Encriptación de Datos Sensibles (Simulación PCI DSS):**
+   - *Error de la IA:* Inicialmente, la IA propuso enviar los datos de la tarjeta de crédito (PAN, CVV, Fecha) en texto plano a través del payload JSON del request HTTP, lo cual vulnera los estándares de seguridad básicos.
+   - *Corrección Técnica:* Se implementó un flujo de cifrado asimétrico estricto. El backend genera en memoria un par de llaves RSA (`CryptoService`) al inicializarse y expone la llave pública. El frontend de Angular descarga esta llave y utiliza la Web Crypto API nativa (`window.crypto.subtle`) para encriptar la tarjeta localmente en el navegador. El backend recibe el payload cifrado, lo procesa en memoria y ofusca el número (`**** **** **** 1234`) antes de cualquier persistencia o log, asegurando que los datos crudos jamás sean interceptados ni almacenados.
 
 ## 4. Impacto
 El uso de la IA aportó el mayor valor en la reducción de tiempo (aproximadamente un ahorro del **40% al 50%** del tiempo total en las primeras horas) al encargarse del "boilerplate" pesado: generar los módulos, controladores, servicios y la sintaxis inicial de los Dockerfiles. Sin embargo, quedó demostrado que para la capa de **orquestación de redes, despliegue en Alpine, manejo seguro de errores y afinamiento de dependencias**, el criterio arquitectónico humano es absolutamente indispensable.

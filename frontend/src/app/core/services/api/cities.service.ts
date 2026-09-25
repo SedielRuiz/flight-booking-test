@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { City } from '@core/interfaces/city.interface';
 import { ApiResponse } from '@core/interfaces/api-response.interface';
+import { API_ENDPOINTS } from '@core/constants/api-endpoints.constant';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,6 @@ export class CitiesService {
     if (name) {
       params = params.set('name', name);
     }
-    return this.http.get<ApiResponse<City[]>>('/cities', { params });
+    return this.http.get<ApiResponse<City[]>>(API_ENDPOINTS.CITIES.GET_ALL, { params });
   }
 }

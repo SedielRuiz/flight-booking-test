@@ -1,0 +1,27 @@
+<div class="modal fade" tabindex="-1" [class.show]="isVisible" [style.display]="isVisible ? 'block' : 'none'" [style.background]="isVisible ? 'rgba(0,0,0,0.5)' : ''">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      
+      <div class="modal-header border-0 pb-0" *ngIf="showCloseHeaderBtn">
+        <button type="button" class="btn-close" (click)="onClose()"></button>
+      </div>
+
+      <div class="modal-body text-center pb-5" [ngClass]="{'pt-4': showCloseHeaderBtn, 'pt-5': !showCloseHeaderBtn}">
+        
+        <div class="mb-4" [ngClass]="iconColor">
+          <i class="bi" [ngClass]="iconClass" style="font-size: 4rem;"></i>
+        </div>
+        
+        <h4 class="fw-bold mb-3">{{ title }}</h4>
+        
+        <p class="text-muted mb-0" *ngIf="message">{{ message }}</p>
+        <p class="text-muted mb-0" *ngIf="messageHtml" [innerHTML]="messageHtml"></p>
+
+        <button class="btn mt-4 px-4 rounded-pill fw-medium" [ngClass]="confirmBtnClass" (click)="onClose()">
+          {{ confirmText }}
+        </button>
+
+      </div>
+    </div>
+  </div>
+</div>

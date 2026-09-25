@@ -141,7 +141,7 @@ model Payment {
 enum SeatStatus {
   AVAILABLE
   LOCKED
-  OCCUPIED
+  RESERVED
 }
 
 enum ReservationStatus {

@@ -1,0 +1,263 @@
+<div class="checkout-wrapper">
+  <div class="checkout-container">
+    <!-- Left column: card preview + seat info -->
+    <div class="checkout-left">
+      <!-- Seat info banner -->
+      <div class="seat-info-banner">
+        <div class="seat-info-icon">
+          <i class="bi bi-airplane-fill"></i>
+        </div>
+        <div class="seat-info-text">
+          <span class="seat-label">Seat temporarily reserved</span>
+          <span class="seat-number"
+            >Seat {{ seatNumber }} &bull; Flight
+            {{ flightId?.substring(0, 8) }}...</span
+          >
+        </div>
+        <div
+          class="timer-badge"
+          [class.warning]="timerWarning"
+          [class.urgent]="timerUrgent"
+        >
+          <i class="bi bi-stopwatch-fill"></i>
+          <span>{{ timerDisplay }}</span>
+        </div>
+      </div>
+
+      <!-- Animated credit card preview-->
+      <div class="card-preview-container">
+        <div class="credit-card">
+          <div class="card-chip">
+            <div class="chip-lines"></div>
+          </div>
+          <div class="card-network">
+            <i class="bi bi-credit-card-2-front-fill card-network-icon"></i>
+          </div>
+          <div class="card-number-display">
+            {{ maskedCardNumber }}
+          </div>
+          <div class="card-footer-info">
+            <div class="card-holder">
+              <span class="card-info-label">Titular</span>
+              <span class="card-info-value">{{ cardholderName }}</span>
+            </div>
+            <div class="card-expiry">
+              <span class="card-info-label">Vence</span>
+              <span class="card-info-value">{{ cardExpiry }}</span>
+            </div>
+          </div>
+          <div class="card-glow"></div>
+        </div>
+      </div>
+
+      <!-- Security trust badges -->
+      <div class="security-badges">
+        <div class="security-badge">
+          <i class="bi bi-shield-lock-fill text-success"></i>
+          <span>Encriptación RSA-2048</span>
+        </div>
+        <div class="security-badge">
+          <i class="bi bi-lock-fill text-success"></i>
+          <span>Pago seguro SSL</span>
+        </div>
+        <div class="security-badge">
+          <i class="bi bi-patch-check-fill text-success"></i>
+          <span>Simulación PCI DSS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: payment form -->
+    <div class="checkout-right">
+      <div class="checkout-header">
+        <h1 class="checkout-title">Datos de Pago</h1>
+        <p class="checkout-subtitle">
+          Tus datos son encriptados con RSA antes de ser enviados
+        </p>
+      </div>
+
+      <form
+        [formGroup]="paymentForm"
+        (ngSubmit)="processPayment()"
+        class="payment-form"
+        autocomplete="off"
+      >
+        <div class="form-group">
+          <label for="cardName" class="form-label">
+            <i class="bi bi-person-fill"></i>
+            Nombre en la tarjeta
+          </label>
+          <input
+            type="text"
+            id="cardName"
+            class="form-input"
+            formControlName="cardName"
+            placeholder="Ej. JUAN PÉREZ"
+            autocomplete="cc-name"
+            [class.is-invalid]="
+              paymentForm.get('cardName')?.invalid &&
+              paymentForm.get('cardName')?.touched
+            "
+          />
+          <div
+            class="error-msg"
+            *ngIf="
+              paymentForm.get('cardName')?.invalid &&
+              paymentForm.get('cardName')?.touched
+            "
+          >
+            <i class="bi bi-exclamation-circle-fill"></i> Nombre inválido
+            (mínimo 3 caracteres)
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cardNumber" class="form-label">
+            <i class="bi bi-credit-card-fill"></i>
+            Número de Tarjeta
+          </label>
+          <input
+            type="text"
+            id="cardNumber"
+            class="form-input"
+            formControlName="cardNumber"
+            placeholder="0000 0000 0000 0000"
+            maxlength="16"
+            autocomplete="cc-number"
+            (input)="formatCardNumber($event)"
+            [class.is-invalid]="
+              paymentForm.get('cardNumber')?.invalid &&
+              paymentForm.get('cardNumber')?.touched
+            "
+          />
+          <div
+            class="error-msg"
+            *ngIf="
+              paymentForm.get('cardNumber')?.invalid &&
+              paymentForm.get('cardNumber')?.touched
+            "
+          >
+            <i class="bi bi-exclamation-circle-fill"></i> Debe contener
+            exactamente 16 dígitos
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="expiryDate" class="form-label">
+              <i class="bi bi-calendar-fill"></i>
+              Expiración
+            </label>
+            <input
+              type="text"
+              id="expiryDate"
+              class="form-input"
+              formControlName="expiryDate"
+              placeholder="MM/YY"
+              maxlength="5"
+              autocomplete="cc-exp"
+              (input)="formatExpiry($event)"
+              [class.is-invalid]="
+                paymentForm.get('expiryDate')?.invalid &&
+                paymentForm.get('expiryDate')?.touched
+              "
+            />
+            <div
+              class="error-msg"
+              *ngIf="
+                paymentForm.get('expiryDate')?.invalid &&
+                paymentForm.get('expiryDate')?.touched
+              "
+            >
+              <i class="bi bi-exclamation-circle-fill"></i> Formato inválido
+              (MM/YY)
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="cvv" class="form-label">
+              <i class="bi bi-shield-fill"></i>
+              CVV
+            </label>
+            <input
+              type="password"
+              id="cvv"
+              class="form-input"
+              formControlName="cvv"
+              placeholder="•••"
+              maxlength="4"
+              autocomplete="cc-csc"
+              [class.is-invalid]="
+                paymentForm.get('cvv')?.invalid &&
+                paymentForm.get('cvv')?.touched
+              "
+            />
+            <div
+              class="error-msg"
+              *ngIf="
+                paymentForm.get('cvv')?.invalid &&
+                paymentForm.get('cvv')?.touched
+              "
+            >
+              <i class="bi bi-exclamation-circle-fill"></i> CVV inválido (3-4
+              dígitos)
+            </div>
+          </div>
+        </div>
+
+        <div class="rsa-info-box">
+          <i class="bi bi-lock-fill"></i>
+          <p>
+            Al hacer clic en <strong>Pagar y Confirmar</strong>, el frontend
+            encripta tus datos con la <strong>llave pública RSA</strong> del
+            servidor. Solo el backend puede desencriptarlos con la
+            <strong>llave privada</strong>. Nunca viajan en texto plano.
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          class="submit-btn"
+          [disabled]="isProcessing || timerExpired"
+          id="pay-button"
+        >
+          <span *ngIf="!isProcessing" class="btn-content">
+            <i class="bi bi-lock-fill"></i>
+            Pagar y Confirmar — Encriptado RSA
+          </span>
+          <span *ngIf="isProcessing" class="btn-content">
+            <span class="spinner"></span>
+            Encriptando y procesando...
+          </span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Error modal -->
+<app-modal
+  [isVisible]="showErrorModal"
+  title="¡Error en el Pago!"
+  message="Hubo un problema procesando el pago. Por favor, verifica tus datos e intenta de nuevo."
+  iconClass="bi-x-circle-fill"
+  iconColor="text-danger"
+  confirmText="Intentar de nuevo"
+  confirmBtnClass="btn-outline-danger"
+  (closeEvent)="closeErrorModal()"
+>
+</app-modal>
+
+<!-- Seat reservation timer expired modal -->
+<app-modal
+  [isVisible]="showExpiredModal"
+  title="¡Tiempo agotado!"
+  message="El tiempo para completar tu reserva expiró. El asiento fue liberado. Por favor, selecciona uno nuevamente."
+  iconClass="bi-clock-fill"
+  iconColor="text-warning"
+  confirmText="Volver a buscar"
+  confirmBtnClass="btn-warning"
+  [showCloseHeaderBtn]="false"
+  (closeEvent)="closeExpiredModal()"
+>
+</app-modal>

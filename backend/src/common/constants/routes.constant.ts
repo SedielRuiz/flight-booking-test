@@ -10,6 +10,14 @@ export const ROUTES = {
     UPDATE_STATUS: ':id/status',
     SEATS: {
       LOCK: ':id/seats/:seatId/lock',
+      UNLOCK: ':id/seats/:seatId/unlock',
     },
+  },
+  CRYPTO: {
+    BASE: 'api/crypto',
+    PUBLIC_KEY: 'public-key',
+  },
+  PAYMENTS: {
+    BASE: 'api/payments',
   },
 } as const;

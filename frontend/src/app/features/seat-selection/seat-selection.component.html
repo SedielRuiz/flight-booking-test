@@ -102,11 +102,11 @@
                     <button *ngIf="getSeat(row, col) as seat"
                             class="seat"
                             [ngClass]="{
-                              'occupied': seat.status === 'LOCKED' || seat.status === 'BOOKED',
+                              'occupied': seat.status === SeatStatus.LOCKED || seat.status === SeatStatus.BOOKED || seat.status === SeatStatus.RESERVED || seat.isAvailable === false,
                               'selected': selectedSeat?.id === seat.id,
-                              'available': seat.status === 'AVAILABLE' && selectedSeat?.id !== seat.id
+                              'available': seat.status === SeatStatus.AVAILABLE && seat.isAvailable !== false && selectedSeat?.id !== seat.id
                             }"
-                            [disabled]="seat.status !== 'AVAILABLE'"
+                            [disabled]="seat.status !== SeatStatus.AVAILABLE || seat.isAvailable === false"
                             (click)="selectSeat(seat)">
                       {{ seat.seatNumber }}
                     </button>
@@ -124,11 +124,11 @@
                     <button *ngIf="getSeat(row, col) as seat"
                             class="seat"
                             [ngClass]="{
-                              'occupied': seat.status === 'LOCKED' || seat.status === 'BOOKED',
+                              'occupied': seat.status === SeatStatus.LOCKED || seat.status === SeatStatus.BOOKED || seat.status === SeatStatus.RESERVED || seat.isAvailable === false,
                               'selected': selectedSeat?.id === seat.id,
-                              'available': seat.status === 'AVAILABLE' && selectedSeat?.id !== seat.id
+                              'available': seat.status === SeatStatus.AVAILABLE && seat.isAvailable !== false && selectedSeat?.id !== seat.id
                             }"
-                            [disabled]="seat.status !== 'AVAILABLE'"
+                            [disabled]="seat.status !== SeatStatus.AVAILABLE || seat.isAvailable === false"
                             (click)="selectSeat(seat)">
                       {{ seat.seatNumber }}
                     </button>
@@ -145,3 +145,15 @@
     </div>
   </div>
 </div>
+
+<!-- Error Modal -->
+<app-modal 
+  [isVisible]="showErrorModal" 
+  title="¡Asiento no disponible!" 
+  message="Lo sentimos, alguien más acaba de reservar este asiento. Por favor selecciona otro para continuar."
+  iconClass="bi-x-circle-fill"
+  iconColor="text-danger"
+  confirmText="Entendido"
+  confirmBtnClass="btn-outline-danger"
+  (closeEvent)="closeErrorModal()">
+</app-modal>

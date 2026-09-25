@@ -1,0 +1,45 @@
+// Booking confirmation summary — rendered via [innerHTML] in success modal
+:host ::ng-deep .booking-summary {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .booking-code {
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1d23;
+    background: #f0f2f5;
+    border: 1.5px dashed #adb5bd;
+    border-radius: 0.5rem;
+    padding: 0.625rem 1rem;
+    text-align: center;
+    letter-spacing: 0.05em;
+    word-break: break-all;
+  }
+
+  .booking-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    background: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+
+    span {
+      font-size: 0.85rem;
+      color: #495057;
+
+      strong {
+        color: #1a1d23;
+      }
+    }
+  }
+
+  small {
+    font-size: 0.72rem;
+    color: #adb5bd;
+    line-height: 1.4;
+  }
+}

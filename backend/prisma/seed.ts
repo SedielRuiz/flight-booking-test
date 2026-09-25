@@ -15,9 +15,15 @@ async function main() {
   await prisma.user.deleteMany();
 
   // Crear ciudades
-  const bog = await prisma.city.create({ data: { code: 'BOG', name: 'Bogotá' } });
-  const mde = await prisma.city.create({ data: { code: 'MDE', name: 'Medellín' } });
-  const ctg = await prisma.city.create({ data: { code: 'CTG', name: 'Cartagena' } });
+  const bog = await prisma.city.create({
+    data: { code: 'BOG', name: 'Bogotá' },
+  });
+  const mde = await prisma.city.create({
+    data: { code: 'MDE', name: 'Medellín' },
+  });
+  const ctg = await prisma.city.create({
+    data: { code: 'CTG', name: 'Cartagena' },
+  });
   const clo = await prisma.city.create({ data: { code: 'CLO', name: 'Cali' } });
 
   console.log(`✅ 4 cities created`);
@@ -29,8 +35,8 @@ async function main() {
         flightNumber: 'AV-1001',
         originId: bog.id,
         destinationId: mde.id,
-        departureTime: new Date('2026-10-15T06:00:00Z'),
-        arrivalTime: new Date('2026-10-15T07:15:00Z'),
+        departureTime: new Date('2026-09-25T06:00:00Z'),
+        arrivalTime: new Date('2026-09-25T07:15:00Z'),
         price: 189000,
       },
     }),
@@ -39,8 +45,8 @@ async function main() {
         flightNumber: 'AV-1002',
         originId: mde.id,
         destinationId: bog.id,
-        departureTime: new Date('2026-10-15T18:30:00Z'),
-        arrivalTime: new Date('2026-10-15T19:45:00Z'),
+        departureTime: new Date('2026-09-26T18:30:00Z'),
+        arrivalTime: new Date('2026-09-26T19:45:00Z'),
         price: 195000,
       },
     }),
@@ -49,8 +55,8 @@ async function main() {
         flightNumber: 'AV-2010',
         originId: bog.id,
         destinationId: ctg.id,
-        departureTime: new Date('2026-10-15T08:00:00Z'),
-        arrivalTime: new Date('2026-10-15T09:45:00Z'),
+        departureTime: new Date('2026-09-25T08:00:00Z'),
+        arrivalTime: new Date('2026-09-25T09:45:00Z'),
         price: 245000,
       },
     }),
@@ -59,8 +65,8 @@ async function main() {
         flightNumber: 'AV-2011',
         originId: ctg.id,
         destinationId: bog.id,
-        departureTime: new Date('2026-10-16T14:00:00Z'),
-        arrivalTime: new Date('2026-10-16T15:45:00Z'),
+        departureTime: new Date('2026-09-27T14:00:00Z'),
+        arrivalTime: new Date('2026-09-27T15:45:00Z'),
         price: 260000,
       },
     }),
@@ -69,8 +75,8 @@ async function main() {
         flightNumber: 'AV-3050',
         originId: bog.id,
         destinationId: clo.id,
-        departureTime: new Date('2026-10-15T10:30:00Z'),
-        arrivalTime: new Date('2026-10-15T11:40:00Z'),
+        departureTime: new Date('2026-09-28T10:30:00Z'),
+        arrivalTime: new Date('2026-09-28T11:40:00Z'),
         price: 175000,
       },
     }),
@@ -79,8 +85,8 @@ async function main() {
         flightNumber: 'AV-3051',
         originId: clo.id,
         destinationId: mde.id,
-        departureTime: new Date('2026-10-16T07:00:00Z'),
-        arrivalTime: new Date('2026-10-16T08:00:00Z'),
+        departureTime: new Date('2026-09-26T07:00:00Z'),
+        arrivalTime: new Date('2026-09-26T08:00:00Z'),
         price: 165000,
       },
     }),
@@ -111,7 +117,9 @@ async function main() {
     totalSeats += seatsData.length;
   }
 
-  console.log(`✅ ${totalSeats} seats created (${rows.length * columns.length} per flight)`);
+  console.log(
+    `✅ ${totalSeats} seats created (${rows.length * columns.length} per flight)`,
+  );
 
   // Crear usuario de prueba
   await prisma.user.create({

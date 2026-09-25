@@ -1,4 +1,5 @@
 import { City } from './city.interface';
+import { SeatStatus } from '@core/enums/domain.enums';
 
 export interface Flight {
   id: string;
@@ -18,6 +19,7 @@ export interface Seat {
   id: string;
   flightId: string;
   seatNumber: string;
-  status: 'AVAILABLE' | 'LOCKED' | 'BOOKED';
+  status: SeatStatus;
   price?: number;
+  isAvailable?: boolean;
 }
