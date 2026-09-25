@@ -29,6 +29,7 @@ const CHECKOUT_DURATION_SECONDS = 10 * 60; // 10 minutes
 export class CheckoutComponent implements OnInit, OnDestroy {
   paymentForm!: FormGroup;
   flightId?: string;
+  flightNumber?: string;
   seatId?: string;
   seatNumber?: string;
   isProcessing = false;
@@ -59,6 +60,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
       this.flightId = params['flightId'];
+      this.flightNumber = params['flightNumber'];
       this.seatId = params['seatId'];
       this.seatNumber = params['seatNumber'];
 

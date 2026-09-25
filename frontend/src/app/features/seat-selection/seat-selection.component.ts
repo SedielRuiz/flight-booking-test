@@ -177,6 +177,7 @@ export class SeatSelectionComponent implements OnInit, OnDestroy {
               flightId: this.flight?.id,
               seatId: this.selectedSeat?.id,
               seatNumber: this.selectedSeat?.seatNumber,
+              flightNumber: this.flight?.flightNumber,
             },
           });
         },

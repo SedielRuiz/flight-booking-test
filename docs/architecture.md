@@ -4,32 +4,7 @@
 
 El siguiente diagrama muestra el flujo de componentes y cómo interactúan las distintas piezas del sistema:
 
-```mermaid
-graph TD
-    Client["Cliente Web (Angular SPA)"]
-
-    subgraph Docker["Docker Compose (docker-compose.yml)"]
-        subgraph flight_network["flight_network (Red Privada)"]
-            Nginx["Nginx\nReverse Proxy / API Gateway\nPuerto expuesto: 4200"]
-            NestJS["NestJS Backend\n(Servidor API REST)\nPuerto interno: 3000"]
-            Postgres[("PostgreSQL 15\nPersistencia relacional")]
-            Redis[("Redis 7\nBloqueo distribuido\ny caché")]
-        end
-    end
-
-    %% Flujo Cliente-Servidor
-    Client -- "GET / (SPA estática)" --> Nginx
-    Client -- "GET/POST /api/* (REST)" --> Nginx
-    Client -- "SSE /api/events (Tiempo real)" --> Nginx
-
-    %% Routing interno de Nginx
-    Nginx -- "location / → Archivos estáticos Angular" --> Nginx
-    Nginx -- "location /api/ → proxy_pass" --> NestJS
-
-    %% Conexiones del Backend
-    NestJS -- "Prisma ORM\n(Lectura/Escritura)" --> Postgres
-    NestJS -- "ioredis\n(SET NX / TTL / Pub-Sub)" --> Redis
-```
+![Diagrama de Arquitectura](./assets/architecture-diagram.png)
 
 ## Patrón Arquitectónico: Cliente-Servidor
 
@@ -57,7 +32,7 @@ Para desacoplar la lógica de negocio de la tecnología de persistencia se utili
 
 ## Manejo de Concurrencia: Bloqueo Distribuido con Redis
 
-El problema central del sistema es evitar el *double booking* (que dos usuarios reserven el mismo asiento simultáneamente). Se resuelve mediante **Distributed Locking** con Redis:
+El problema central del sistema es evitar el _double booking_ (que dos usuarios reserven el mismo asiento simultáneamente). Se resuelve mediante **Distributed Locking** con Redis:
 
 1. Cuando un usuario selecciona un asiento, el backend ejecuta `SET seat:{flightId}:{seatNumber} {userId} NX EX 600` en Redis.
 2. La operación `NX` (Set if Not eXists) es **atómica**: si dos peticiones llegan en el mismo milisegundo, Redis garantiza que solo una tendrá éxito.
@@ -74,15 +49,15 @@ Para que todos los clientes vean en vivo los cambios de disponibilidad de asient
 
 ## Decisiones Técnicas Clave
 
-| Tecnología | Rol | Justificación |
-|---|---|---|
-| **NestJS** | Framework backend | Inyección de dependencias nativa, soporte TypeScript estricto, módulos encapsulados, Exception Filters globales. |
-| **Angular 18** | Framework frontend | Framework opinado y tipado, ideal para SPAs robustas con formularios complejos y estado reactivo. |
-| **PostgreSQL 15** | Persistencia relacional | Garantías ACID para transacciones de pago y reservas definitivas. |
-| **Redis 7** | Bloqueo distribuido y caché | Operaciones atómicas en memoria (`SET NX`), TTL automático, latencia de microsegundos. |
-| **Prisma ORM** | Acceso a datos | Type-safety completo, migraciones predecibles, generación automática de tipos TypeScript a partir del schema. |
-| **Nginx** | Reverse Proxy / API Gateway | Servir estáticos de Angular, redirigir `/api/*` al backend, aislar servicios internos de la red pública. |
-| **Docker Compose** | Orquestación | Un solo comando levanta todo el stack (Postgres, Redis, Backend, Frontend+Nginx) con redes aisladas y volúmenes persistentes. |
+| Tecnología         | Rol                         | Justificación                                                                                                                 |
+| ------------------ | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **NestJS**         | Framework backend           | Inyección de dependencias nativa, soporte TypeScript estricto, módulos encapsulados, Exception Filters globales.              |
+| **Angular 18**     | Framework frontend          | Framework opinado y tipado, ideal para SPAs robustas con formularios complejos y estado reactivo.                             |
+| **PostgreSQL 15**  | Persistencia relacional     | Garantías ACID para transacciones de pago y reservas definitivas.                                                             |
+| **Redis 7**        | Bloqueo distribuido y caché | Operaciones atómicas en memoria (`SET NX`), TTL automático, latencia de microsegundos.                                        |
+| **Prisma ORM**     | Acceso a datos              | Type-safety completo, migraciones predecibles, generación automática de tipos TypeScript a partir del schema.                 |
+| **Nginx**          | Reverse Proxy / API Gateway | Servir estáticos de Angular, redirigir `/api/*` al backend, aislar servicios internos de la red pública.                      |
+| **Docker Compose** | Orquestación                | Un solo comando levanta todo el stack (Postgres, Redis, Backend, Frontend+Nginx) con redes aisladas y volúmenes persistentes. |
 
 ## Estructura del Modelo de Datos
 
