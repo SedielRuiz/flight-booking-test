@@ -7,13 +7,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { APP_ROUTES } from '@core/constants/routes.constant';
+import { FlightsService } from '@core/services/api/flights.service';
 import {
   BookingResult,
   PaymentsService,
 } from '@core/services/api/payments.service';
-import { FlightsService } from '@core/services/api/flights.service';
 import { CryptoService } from '@core/services/crypto.service';
-import { APP_ROUTES } from '@core/constants/routes.constant';
 import { ModalComponent } from '@shared/components/modal/modal.component';
 import { firstValueFrom, interval, Subscription } from 'rxjs';
 
@@ -110,11 +110,12 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.timerSub?.unsubscribe();
-    // If the user abandons checkout or the timer expires before a successful payment, 
+    // If the user abandons checkout or the timer expires before a successful payment,
     // manually unlock the seat so others can book it immediately.
     if (!this.isPaymentSuccessful && this.flightId && this.seatId) {
       this.flightsService.unlockSeat(this.flightId, this.seatId).subscribe({
-        error: (err) => console.error('Failed to unlock seat on checkout exit', err)
+        error: (err) =>
+          console.error('Failed to unlock seat on checkout exit', err),
       });
     }
   }
@@ -186,14 +187,12 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       // 1. Fetch public key from backend (exposed via GET /api/crypto/public-key)
       const publicKey = await this.cryptoService.getPublicKey();
 
-      // 2. Build payment payload including flight/seat context
+      // 2. Build payment payload WITHOUT flight/seat
       const payload = JSON.stringify({
         ...this.paymentForm.value,
-        flightId: this.flightId,
-        seatId: this.seatId,
       });
 
-      // 3. Encrypt payload using RSA-OAEP via Web Crypto API — card data never travels in plain text
+      // 3. Encrypt payload using RSA-OAEP
       const encryptedPayload = await this.cryptoService.encryptRSA(
         publicKey,
         payload,

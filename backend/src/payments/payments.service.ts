@@ -142,7 +142,7 @@ export class PaymentsService {
         isSoldOut = true;
       }
 
-      return { bookedSeat, reservation, isSoldOut };
+      return { reservation, isSoldOut };
     });
 
     // 6. Remove the Redis lock — seat is now permanently booked in DB
