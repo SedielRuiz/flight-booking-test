@@ -113,6 +113,18 @@ El frontend queda escuchando en **http://localhost:4200** con hot-reload activad
 
 ---
 
+## 🔒 Autenticación API (Basic Auth)
+
+Todas las rutas del API están protegidas mediante **Basic Authentication** (simulando seguridad PCI-DSS y protección de recursos).
+El frontend ya inyecta estos headers automáticamente a través de un interceptor, por lo que la SPA funciona de forma transparente.
+
+Si deseas probar los endpoints directamente desde **Postman**, **cURL** o el navegador, utiliza estas credenciales por defecto (configurables en el `.env`):
+
+- **Usuario:** `davivienda`
+- **Contraseña:** `flight_secret`
+
+---
+
 ## Scripts Útiles
 
 ### Backend (`/backend`)
@@ -158,6 +170,7 @@ flight-booking-test/
 │   ├── src/
 │   ├── Dockerfile
 │   └── package.json
+├── shared/                   # Enums, constantes e interfaces (Compartidos Frontend/Backend)
 ├── infrastructure/
 │   └── nginx/
 │       └── nginx.conf        # Configuración del API Gateway

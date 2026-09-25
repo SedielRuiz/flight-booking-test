@@ -65,5 +65,9 @@ A lo largo del desarrollo, la IA propuso varias soluciones subóptimas que tuvie
 4. **Reutilización Estratégica de Vistas (Angular):**
    - *Decisión Técnica:* Para implementar la búsqueda de reservas por código (`GET /reservation/:code`), se evitó la creación redundante propensa a duplicación de código. Se inyectó el payload de la búsqueda directamente a través del estado de la historia de enrutamiento (`history.state`) hacia el componente existente de confirmación (`BookingConfirmationComponent`), ahorrando tiempo, reduciendo el bundle de Angular y simplificando la UI.
 
+5. **Capa Compartida de Dominio (Shared Layer) Sin Monorepo Complejo:**
+   - *El Reto:* Mantener sincronizados los estados del dominio (`Enums`, constantes, etc.) entre el Frontend (Angular) y el Backend (NestJS) suele requerir de arquitecturas pesadas tipo monorepo (Nx o Lerna) que complican la curva de despliegue en Docker.
+   - *Solución Técnica:* Se implementó un enfoque ligero ("lite") creando una carpeta `shared` estratégicamente ubicada en la raíz del proyecto. Usando los alias de *TypeScript Path Mapping* (`@domain/*` en los `tsconfig.json` de ambos proyectos), logramos que Angular y NestJS consuman los mismos archivos `.ts` en tiempo de compilación. Esto garantiza 100% de type-safety (los Enums como `FlightStatusEnum` se comparten nativamente) sin los problemas de resolución de módulos (`rootDir`) que generaría un monorepo puro en Docker.
+
 ## 5. Impacto
 El uso de la IA aportó el mayor valor en la reducción de tiempo (aproximadamente un ahorro del **40% al 50%** del tiempo total en las primeras horas) al encargarse del "boilerplate" pesado: generar los módulos, controladores, servicios y la sintaxis inicial de los Dockerfiles. Sin embargo, quedó demostrado que para la capa de **orquestación de redes, despliegue en Alpine, manejo seguro de errores y afinamiento de dependencias**, el criterio arquitectónico humano es absolutamente indispensable.

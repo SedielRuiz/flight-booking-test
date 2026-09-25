@@ -145,7 +145,7 @@ export class FlightsService {
       let locked = 0;
 
       f.seats.forEach(s => {
-        if (s.status === 'RESERVED') {
+        if (s.status === SeatStatusEnum.RESERVED) {
           reserved++;
         } else if (lockedSeatIds.has(s.id)) {
           locked++;

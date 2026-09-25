@@ -1,5 +1,6 @@
 import { CryptoService } from '@common/crypto/crypto.service.js';
 import { RedisService } from '@common/redis/redis.service.js';
+import { FlightStatusEnum, SeatStatusEnum } from '@domain/index.js';
 import {
   BadRequestException,
   Injectable,
@@ -62,7 +63,7 @@ export class PaymentsService {
     // 3. Verify seat and flight exist and seat is not already RESERVED
     const seat = await this.prisma.seat.findUnique({ where: { id: seatId } });
     if (!seat) throw new NotFoundException('Seat not found');
-    if (seat.status === 'RESERVED') {
+    if (seat.status === SeatStatusEnum.RESERVED) {
       throw new BadRequestException('This seat has already been booked');
     }
 
@@ -87,7 +88,7 @@ export class PaymentsService {
     const result = await this.prisma.$transaction(async (tx) => {
       const bookedSeat = await tx.seat.update({
         where: { id: seatId },
-        data: { status: 'RESERVED' },
+        data: { status: SeatStatusEnum.RESERVED },
       });
 
       // 5b. Create the Reservation
@@ -123,14 +124,14 @@ export class PaymentsService {
 
       // 5e. Check if there are any available seats left
       const availableSeatsCount = await tx.seat.count({
-        where: { flightId, status: 'AVAILABLE' },
+        where: { flightId, status: SeatStatusEnum.AVAILABLE },
       });
 
       let isSoldOut = false;
       if (availableSeatsCount === 0) {
         await tx.flight.update({
           where: { id: flightId },
-          data: { status: 'SOLD_OUT' },
+          data: { status: FlightStatusEnum.SOLD_OUT },
         });
         isSoldOut = true;
       }
