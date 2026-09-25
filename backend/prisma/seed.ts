@@ -5,14 +5,11 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Seeding database...');
 
-  // Limpiar datos existentes (orden por FK)
-  await prisma.ticket.deleteMany();
-  await prisma.payment.deleteMany();
-  await prisma.reservation.deleteMany();
-  await prisma.seat.deleteMany();
-  await prisma.flight.deleteMany();
-  await prisma.city.deleteMany();
-  await prisma.user.deleteMany();
+  const existingCities = await prisma.city.count();
+  if (existingCities > 0) {
+    console.log('Database is already seeded. Skipping seed process.');
+    return;
+  }
 
   // Crear ciudades
   const bog = await prisma.city.create({

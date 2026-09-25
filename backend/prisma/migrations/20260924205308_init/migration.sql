@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "SeatStatus" AS ENUM ('AVAILABLE', 'LOCKED', 'OCCUPIED');
+CREATE TYPE "SeatStatus" AS ENUM ('AVAILABLE', 'LOCKED', 'RESERVED');
 
 -- CreateEnum
 CREATE TYPE "ReservationStatus" AS ENUM ('PENDING', 'CONFIRMED', 'CANCELLED');

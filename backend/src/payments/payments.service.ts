@@ -86,10 +86,16 @@ export class PaymentsService {
     const bookingCode = `DV-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 
     const result = await this.prisma.$transaction(async (tx) => {
-      const bookedSeat = await tx.seat.update({
-        where: { id: seatId },
+      const updatedSeatCount = await tx.seat.updateMany({
+        where: { id: seatId, status: SeatStatusEnum.AVAILABLE },
         data: { status: SeatStatusEnum.RESERVED },
       });
+
+      if (updatedSeatCount.count === 0) {
+        throw new BadRequestException(
+          'Seat was just booked by another transaction',
+        );
+      }
 
       // 5b. Create the Reservation
       const reservation = await tx.reservation.create({
@@ -115,7 +121,7 @@ export class PaymentsService {
       await tx.payment.create({
         data: {
           amount: flight.price,
-          currency: 'PEN',
+          currency: 'COP',
           cardNumberMasked: `**** **** **** ${paymentData.cardNumber.slice(-4)}`,
           status: 'SUCCESS',
           reservationId: reservation.id,

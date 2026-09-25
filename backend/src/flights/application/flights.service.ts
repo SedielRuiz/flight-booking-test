@@ -8,7 +8,7 @@ import type { FlightSearchCriteria } from '@flights/domain/interfaces/flight-sea
 import type { FlightRepository } from '@flights/domain/repositories/flight.repository.js';
 import { FLIGHT_REPOSITORY } from '@flights/domain/repositories/flight.repository.js';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 import { RedisService } from '@common/redis/redis.service.js';
 import { PrismaService } from '@prisma/prisma.service.js';
@@ -122,6 +122,17 @@ export class FlightsService {
       payload: {
         flightId,
         seatId,
+      },
+    });
+  }
+
+  @OnEvent('seat.unlocked')
+  handleSeatUnlockedFromRedis(payload: { flightId: string; seatId: string }) {
+    this.eventEmitter.emit('app.events', {
+      type: 'SEAT_UNLOCKED',
+      payload: {
+        flightId: payload.flightId,
+        seatId: payload.seatId,
       },
     });
   }
