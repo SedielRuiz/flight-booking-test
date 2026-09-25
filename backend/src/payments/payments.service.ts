@@ -121,7 +121,21 @@ export class PaymentsService {
         },
       });
 
-      return { bookedSeat, reservation };
+      // 5e. Check if there are any available seats left
+      const availableSeatsCount = await tx.seat.count({
+        where: { flightId, status: 'AVAILABLE' },
+      });
+
+      let isSoldOut = false;
+      if (availableSeatsCount === 0) {
+        await tx.flight.update({
+          where: { id: flightId },
+          data: { status: 'SOLD_OUT' },
+        });
+        isSoldOut = true;
+      }
+
+      return { bookedSeat, reservation, isSoldOut };
     });
 
     // 6. Remove the Redis lock — seat is now permanently booked in DB
@@ -137,6 +151,13 @@ export class PaymentsService {
         bookingCode,
       },
     });
+
+    if (result.isSoldOut) {
+      this.eventEmitter.emit('app.events', {
+        type: 'FLIGHT_SOLD_OUT',
+        payload: { flightId },
+      });
+    }
 
     return {
       bookingCode,

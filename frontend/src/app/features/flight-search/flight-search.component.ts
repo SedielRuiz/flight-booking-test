@@ -22,6 +22,7 @@ export class FlightSearchComponent implements OnInit, OnDestroy {
   private sseService = inject(SseService);
   private router = inject(Router);
   private sseSub?: Subscription;
+  private sseSoldOutSub?: Subscription;
 
   flights: Flight[] = [];
   meta: PaginationMeta | null = null;
@@ -36,10 +37,18 @@ export class FlightSearchComponent implements OnInit, OnDestroy {
         flight.status = update.status;
       }
     });
+
+    this.sseSoldOutSub = this.sseService.on<{ flightId: string }>('FLIGHT_SOLD_OUT').subscribe(update => {
+      const flight = this.flights.find(f => f.id === update.flightId);
+      if (flight) {
+        flight.status = 'SOLD_OUT';
+      }
+    });
   }
 
   ngOnDestroy() {
     this.sseSub?.unsubscribe();
+    this.sseSoldOutSub?.unsubscribe();
   }
 
   onSearch(params: SearchFlightsParams): void {

@@ -41,6 +41,14 @@ export class FlightsService {
     return this.http.get<ApiResponse<Flight>>(API_ENDPOINTS.FLIGHTS.BY_ID(id));
   }
 
+  getMetrics(): Observable<ApiResponse<any[]>> {
+    return this.http.get<ApiResponse<any[]>>(API_ENDPOINTS.FLIGHTS.METRICS);
+  }
+
+  getReservationByCode(code: string): Observable<ApiResponse<any>> {
+    return this.http.get<ApiResponse<any>>(API_ENDPOINTS.FLIGHTS.RESERVATION(code));
+  }
+
   lockSeat(
     flightId: string,
     seatId: string,

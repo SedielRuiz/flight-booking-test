@@ -26,7 +26,7 @@ async function main() {
   });
   const clo = await prisma.city.create({ data: { code: 'CLO', name: 'Cali' } });
 
-  console.log(`✅ 4 cities created`);
+  console.log(`4 cities created`);
 
   // Crear vuelos
   const flights = await Promise.all([
@@ -90,9 +90,19 @@ async function main() {
         price: 165000,
       },
     }),
+    prisma.flight.create({
+      data: {
+        flightNumber: 'AV-9999',
+        originId: bog.id,
+        destinationId: mde.id,
+        departureTime: new Date('2026-10-01T10:00:00Z'),
+        arrivalTime: new Date('2026-10-01T11:00:00Z'),
+        price: 500000,
+      },
+    }),
   ]);
 
-  console.log(`✅ ${flights.length} flights created`);
+  console.log(`${flights.length} flights created`);
 
   // Crear asientos para cada vuelo (filas 1-5, columnas A-F = 30 asientos por vuelo)
   const columns = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -103,13 +113,27 @@ async function main() {
   for (const flight of flights) {
     const seatsData = [];
 
-    for (const row of rows) {
-      for (const col of columns) {
-        seatsData.push({
-          seatNumber: `${row}${col}`,
-          status: SeatStatus.AVAILABLE,
-          flightId: flight.id,
-        });
+    if (flight.flightNumber === 'AV-9999') {
+      // Solo 2 asientos para este vuelo de prueba
+      seatsData.push({
+        seatNumber: '1A',
+        status: SeatStatus.AVAILABLE,
+        flightId: flight.id,
+      });
+      seatsData.push({
+        seatNumber: '1B',
+        status: SeatStatus.AVAILABLE,
+        flightId: flight.id,
+      });
+    } else {
+      for (const row of rows) {
+        for (const col of columns) {
+          seatsData.push({
+            seatNumber: `${row}${col}`,
+            status: SeatStatus.AVAILABLE,
+            flightId: flight.id,
+          });
+        }
       }
     }
 

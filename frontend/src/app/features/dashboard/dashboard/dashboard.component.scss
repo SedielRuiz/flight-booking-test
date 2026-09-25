@@ -1,0 +1,133 @@
+.dashboard-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .header {
+    text-align: center;
+    margin-bottom: 3rem;
+
+    h1 {
+      font-size: 2.5rem;
+      color: var(--text-color, #333);
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #666;
+    }
+  }
+
+  .loading {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+
+  .flight-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-top: 4px solid #da0018;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    &.sold-out {
+      border-top-color: #666;
+      opacity: 0.8;
+      
+      .status-badge {
+        background: #f8d7da;
+        color: #721c24;
+      }
+    }
+
+    .flight-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+
+      h2 {
+        font-size: 1.5rem;
+        margin: 0;
+        color: #333;
+      }
+
+      .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        
+        &.scheduled {
+          background: #d4edda;
+          color: #155724;
+        }
+
+        &.sold_out {
+          background: #f8d7da;
+          color: #721c24;
+        }
+      }
+    }
+
+    .route {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 1.5rem;
+
+      .icon {
+        color: #da0018;
+      }
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+
+      .metric-item {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .label {
+          font-size: 0.8rem;
+          color: #666;
+          text-transform: uppercase;
+          margin-bottom: 0.5rem;
+        }
+
+        .value {
+          font-size: 1.5rem;
+          font-weight: 700;
+        }
+
+        &.total .value { color: #333; }
+        &.available .value { color: #28a745; }
+        &.locked .value { color: #ffc107; }
+        &.reserved .value { color: #da0018; }
+      }
+    }
+  }
+}

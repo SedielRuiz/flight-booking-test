@@ -6,6 +6,8 @@ export const ROUTES = {
   },
   FLIGHTS: {
     BASE: 'api/flights',
+    METRICS: 'metrics',
+    RESERVATION: 'reservation/:code',
     BY_ID: ':id',
     UPDATE_STATUS: ':id/status',
     SEATS: {

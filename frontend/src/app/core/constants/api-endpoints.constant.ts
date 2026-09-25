@@ -1,6 +1,8 @@
 export const API_ENDPOINTS = {
   FLIGHTS: {
     SEARCH: '/flights',
+    METRICS: '/flights/metrics',
+    RESERVATION: (code: string) => `/flights/reservation/${code}`,
     BY_ID: (id: string) => `/flights/${id}`,
     LOCK_SEAT: (flightId: string, seatId: string) =>
       `/flights/${flightId}/seats/${seatId}/lock`,

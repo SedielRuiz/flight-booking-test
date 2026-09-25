@@ -49,5 +49,21 @@ A lo largo del desarrollo, la IA propuso varias soluciones subóptimas que tuvie
    - *Error de la IA:* Inicialmente, la IA propuso enviar los datos de la tarjeta de crédito (PAN, CVV, Fecha) en texto plano a través del payload JSON del request HTTP, lo cual vulnera los estándares de seguridad básicos.
    - *Corrección Técnica:* Se implementó un flujo de cifrado asimétrico estricto. El backend genera en memoria un par de llaves RSA (`CryptoService`) al inicializarse y expone la llave pública. El frontend de Angular descarga esta llave y utiliza la Web Crypto API nativa (`window.crypto.subtle`) para encriptar la tarjeta localmente en el navegador. El backend recibe el payload cifrado, lo procesa en memoria y ofusca el número (`**** **** **** 1234`) antes de cualquier persistencia o log, asegurando que los datos crudos jamás sean interceptados ni almacenados.
 
-## 4. Impacto
+## 4. Decisiones Finales de Refactorización y Arquitectura Avanzada
+
+1. **Dashboard y Métricas Híbridas (DB + Redis):**
+   - *El Reto:* Mostrar métricas en tiempo real de los vuelos requería no solo contar las sillas reservadas en la base de datos (PostgreSQL), sino también las sillas que están siendo bloqueadas temporalmente en el flujo de compra (Redis).
+   - *Solución Técnica:* Se implementó un endpoint `GET /metrics` que realiza una consulta combinada: trae el estado total de la DB y lee on-the-fly las llaves vivas en Redis (`flight:*:seat:*:lock`), consolidando la data de "Libres", "Bloqueados" y "Reservados" antes de enviarla al cliente, lo cual actualiza el Dashboard de Angular dinámicamente mediante SSE.
+
+2. **Limpieza de Controladores y Single Responsibility:**
+   - *El Reto:* La IA originalmente inyectó demasiada lógica condicional y lanzamiento de excepciones (`NotFoundException`) directamente en la capa de controladores (`flights.controller.ts`).
+   - *Corrección Técnica:* Se impuso un refactor estricto moviendo toda la lógica de validación, manejo de *locks*, y excepciones a la capa de servicios (`flights.service.ts`). Los controladores quedaron exclusivamente como enrutadores limpios, mejorando la mantenibilidad y la testeabilidad.
+
+3. **Pruebas Unitarias con Vitest vs Jest:**
+   - *Decisión Técnica:* Se decidió prescindir de **Jest** en favor de **Vitest** para la suite de pruebas unitarias. Esto debido a que el backend de Node/NestJS fue configurado estrictamente bajo el estándar **ECMAScript Modules (ESM)** nativo (`type: module`). Mientras que Jest sufre problemas históricos y requiere complejas configuraciones de Babel/ts-jest para soportar ESM de forma correcta, Vitest lo soporta de forma nativa *out-of-the-box*, compilando TypeScript a través de ESBuild entre 10 y 100 veces más rápido con la misma API asíncrona.
+
+4. **Reutilización Estratégica de Vistas (Angular):**
+   - *Decisión Técnica:* Para implementar la búsqueda de reservas por código (`GET /reservation/:code`), se evitó la creación redundante propensa a duplicación de código. Se inyectó el payload de la búsqueda directamente a través del estado de la historia de enrutamiento (`history.state`) hacia el componente existente de confirmación (`BookingConfirmationComponent`), ahorrando tiempo, reduciendo el bundle de Angular y simplificando la UI.
+
+## 5. Impacto
 El uso de la IA aportó el mayor valor en la reducción de tiempo (aproximadamente un ahorro del **40% al 50%** del tiempo total en las primeras horas) al encargarse del "boilerplate" pesado: generar los módulos, controladores, servicios y la sintaxis inicial de los Dockerfiles. Sin embargo, quedó demostrado que para la capa de **orquestación de redes, despliegue en Alpine, manejo seguro de errores y afinamiento de dependencias**, el criterio arquitectónico humano es absolutamente indispensable.

@@ -31,15 +31,19 @@ export class FlightsController {
     });
   }
 
+  @Get(ROUTES.FLIGHTS.METRICS)
+  async getMetrics() {
+    return this.flightsService.getMetrics();
+  }
+
+  @Get(ROUTES.FLIGHTS.RESERVATION)
+  async getReservationByCode(@Param('code') code: string) {
+    return this.flightsService.getReservationByCode(code);
+  }
+
   @Get(ROUTES.FLIGHTS.BY_ID)
   async findById(@Param('id') id: string) {
-    const flight = await this.flightsService.findById(id);
-
-    if (!flight) {
-      throw new NotFoundException(`Flight with id "${id}" not found`);
-    }
-
-    return flight;
+    return this.flightsService.findById(id);
   }
 
   @Patch(ROUTES.FLIGHTS.UPDATE_STATUS)
@@ -47,9 +51,7 @@ export class FlightsController {
     @Param('id') id: string,
     @Body() updateDto: UpdateFlightStatusDto,
   ) {
-    const flight = await this.flightsService.updateStatus(id, updateDto.status);
-    if (!flight) throw new NotFoundException('Flight not found');
-    return flight;
+    return this.flightsService.updateStatus(id, updateDto.status);
   }
 
   @Patch(ROUTES.FLIGHTS.SEATS.LOCK)
@@ -58,17 +60,7 @@ export class FlightsController {
     @Param('seatId') seatId: string,
     @Body('userId') userId: string,
   ) {
-    if (!userId) {
-      userId = 'mock-user-123';
-    }
-
-    const isLocked = await this.flightsService.lockSeat(id, seatId, userId);
-    if (!isLocked) {
-      throw new NotFoundException(
-        `Seat with id "${seatId}" is already locked or unavailable`,
-      );
-    }
-
+    await this.flightsService.lockSeat(id, seatId, userId);
     return {
       success: true,
       message: 'Seat locked successfully for 10 minutes',

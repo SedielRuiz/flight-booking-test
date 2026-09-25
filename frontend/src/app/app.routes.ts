@@ -3,6 +3,9 @@ import { MainLayoutComponent } from '@core/layouts/main-layout/main-layout.compo
 import { FlightSearchComponent } from '@features/flight-search/flight-search.component';
 import { ReservationsComponent } from '@features/reservations/reservations.component';
 import { SeatSelectionComponent } from '@features/seat-selection/seat-selection.component';
+import { CheckoutComponent } from '@features/checkout/checkout.component';
+import { BookingConfirmationComponent } from '@features/booking-confirmation/booking-confirmation.component';
+import { DashboardComponent } from '@features/dashboard/dashboard/dashboard.component';
 
 export const routes: Routes = [
   {
@@ -24,17 +27,15 @@ export const routes: Routes = [
       },
       {
         path: 'checkout',
-        loadComponent: () =>
-          import('@features/checkout/checkout.component').then(
-            (m) => m.CheckoutComponent,
-          ),
+        component: CheckoutComponent,
       },
       {
         path: 'booking-confirmation',
-        loadComponent: () =>
-          import(
-            '@features/booking-confirmation/booking-confirmation.component'
-          ).then((m) => m.BookingConfirmationComponent),
+        component: BookingConfirmationComponent,
+      },
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
       },
     ],
   },

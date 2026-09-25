@@ -5,12 +5,16 @@ import { AppService } from '@/app.service.js';
 describe('AppController', () => {
   let controller: AppController;
   let appServiceMock: any;
+  let eventEmitterMock: any;
 
   beforeEach(() => {
     appServiceMock = {
       getHealthCheck: vi.fn(),
     };
-    controller = new AppController(appServiceMock as unknown as AppService);
+    eventEmitterMock = {
+      on: vi.fn(),
+    };
+    controller = new AppController(appServiceMock as unknown as AppService, eventEmitterMock);
   });
 
   describe('health', () => {
